@@ -1,0 +1,14 @@
+---
+# This file contains handlers that are triggered by tasks
+
+- name: Restart Nginx
+  systemd:
+    name: nginx
+    state: restarted
+  become: yes
+
+- name: Restart humangov
+  systemd:
+    name: humangov
+    state: restarted
+  become: yes

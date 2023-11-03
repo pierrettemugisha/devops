@@ -1,0 +1,45 @@
+# HumanGov: An Terraform & Ansible project
+
+This project is part of the DevOps specialization taken at The [Cloud Bootcamp Platform](https://thecloudbootcamp.com/?utm_source=linkedin&utm_medium=linksaibamais&utm_campaign=organic)
+
+You can create a similar invironment and deploy your own code for testing. There is a sample data for use in the applcation  folder (Property of The Cloud BootCamp Platform.  For Education use only) I used AWS Cloud9 to deploy the environments.
+
+#### Create an empty Ansible inventory file on `/etc/ansible/hosts`
+
+Run:
+* `su`
+* `sudo touch /etc/ansible/hosts`
+* `sudo chown ec2-user:ec2-user /etc/ansible/hosts`
+* `sudo chown -R ec2-user:ec2-user /etc/ansible`
+
+#### Create S3 and DynamoDB to store terraform state
+
+* `aws s3api create-bucket --bucket <BUCKET-NAME> --region us-east-1`. Be creative with your backet name as it must be globally unique.
+
+* `aws dynamodb create-table   --table-name xxxxxxxx-terraform-state-lock-table   --attribute-definitions AttributeName=LockID,AttributeType=S   --key-schema AttributeName=LockID,KeyType=HASH   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5   --region us-east-1`. Replace `xxxxxxxx` by whatever you like.
+
+Note: AWS region should be unique all around. Use the same one you are using to create everything.
+
+#### Provision the infrastructure
+
+`cd` to the terraform folder in the infrastructure folder and run
+
+* `terraform plan`
+* `terraform apply`
+
+Ping the instances created by running `ansible all -m ping -e "ansible_ssh_private_key_file=<YOUR-EC2-KEY>.pem"`
+
+#### Run the Ansible Playbook command
+
+`ansible-playbook deploy-humangov.yml -e "ansible_ssh_private_key_file=/home/ec2-user/environment/humangov-ec2-key.pem" `
+
+#### Destroy the infrastructure on AWS using terraform
+
+Create an IAM user for console access only and provide credentials via the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`,environment variables, representing the IAM user AWS Access Key and AWS Secret Key, respectively.
+
+* `export AWS_ACCESS_KEY_ID="anaccesskey"`
+* `export AWS_SECRET_ACCESS_KEY="asecretkey"`
+
+This will help delete S3 backets with ACL
+
+Run `terraform destroy`. 

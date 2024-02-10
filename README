@@ -24,6 +24,7 @@ Note: AWS region should be unique all around. Use the same one you are using to 
 
 `cd` to the terraform folder in the infrastructure folder and run
 
+* `terraform init` to initialize the S3 backend
 * `terraform plan`
 * `terraform apply`
 

@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: humangov-python-app-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: frontend
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:xxxxxxxxxxx:certificate/xxxxxxxxxxx # Make sure you replace the Certificate ARN in red with your Certificate ARN.
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+  labels:
+    app: humangov-python-app-ingress
+spec:
+  ingressClassName: alb
+  rules:
+    - host: california.humangov.click # Replace this with your domain name Created in Route 53
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: humangov-nginx-service-california
+                port:
+                  number: 80

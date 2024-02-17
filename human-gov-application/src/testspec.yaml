@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      -  # Get Image URI
+      - cd src
+      - IMAGE_URI=$(jq -r '.[0].imageUri' imagedefinitions.json)
+      - echo $IMAGE_URI
+      # Log in to Amazon ECR.
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/l4c0j8h9
+      # Pull the Docker image from ECR.
+      - docker pull $IMAGE_URI
+      # Run pytest in the Docker container.
+      - docker run --rm $IMAGE_URI pytest tests/
